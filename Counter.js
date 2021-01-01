@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { actionCreators } from './store';
 
 
-const Counter = () => {
-    const [count, setCount] = useState(0);
-    const onAddCount = () => {
-        setCount((prevCount) => {
-            return prevCount + 1;
-        });
-    }
-
-    const onMinusCount = () => {
-        setCount((prevCount) => {
-            return prevCount - 1;
-        });
-    }
-
+const Counter = ({ count, onAddCount, onMinusCount}) => {
+    
     return (
         <View style={styles.container}>
             <View style={styles.btnView}>
@@ -59,6 +49,16 @@ const styles = StyleSheet.create({
         fontSize: 40 
     }
 });
-  
-  export default Counter;
+const mapStateToProps = (state, ownProps) => {
+    return { count: state }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        onAddCount: () => dispatch(actionCreators.addCount()),
+        onMinusCount: () => dispatch(actionCreators.minusCount())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter);
   

@@ -1,29 +1,77 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { actionCreators } from './store';
+import { addCount, minusCount } from './store';
 
 
 const Counter = ({ count, onAddCount, onMinusCount}) => {
-    
+    const [addAmount, setAddAmount] = useState('0');
+    const [minusAmount, setMinusAmount] = useState('0');
+
+    const onSetAddAmount = useCallback((value) => {
+        setAddAmount(value);
+    }, []);
+
+    const onSetMinusAmount = useCallback((value) => {
+        setMinusAmount(value);
+    }, []);
+
+    const onAddAmountCount = () => {
+        onAddCount(parseInt(addAmount));
+    }
+
+    const onMinusAmountCount = () => {
+        onMinusCount(parseInt(minusAmount));
+    }
+
     return (
         <View style={styles.container}>
-            <View style={styles.btnView}>
-                <TouchableOpacity 
-                    onPress={onAddCount}
-                    style={styles.btn}>
-                    <Text style={styles.btnText}>+</Text>
-                </TouchableOpacity>
+            <View style={styles.amountRow}>
+                <View style={styles.amountInnerView}>
+                    <View style={styles.amountTextView}>
+                        <Text style={styles.amountText}>증가값: </Text>
+                    </View>
+                    <View style={styles.amountInnerView}>
+                        <TextInput
+                            style={styles.amountInput} 
+                            keyboardType='number-pad'
+                            onChangeText={onSetAddAmount}
+                            value={addAmount}
+                        />
+                    </View>
+                </View>
+                <View style={styles.amountInnerView}>
+                    <View style={styles.amountTextView}>
+                        <Text style={styles.amountText}>감솟값: </Text>
+                    </View>
+                    <View style={styles.amountInnerView}>
+                        <TextInput
+                            style={styles.amountInput} 
+                            keyboardType='number-pad'
+                            onChangeText={onSetMinusAmount}
+                            value={minusAmount}
+                        />
+                    </View>
+                </View>
             </View>
-            <View style={styles.countView}>
-                <Text style={styles.countText}>{count}</Text>
-            </View>
-            <View style={styles.btnView}>
-                <TouchableOpacity 
-                    onPress={onMinusCount}
-                    style={styles.btn}>
-                    <Text style={styles.btnText}>-</Text>
-                </TouchableOpacity>
+            <View style={styles.countRow}>
+                <View style={styles.btnView}>
+                    <TouchableOpacity 
+                        onPress={onAddAmountCount}
+                        style={styles.btn}>
+                        <Text style={styles.btnText}>+</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.countView}>
+                    <Text style={styles.countText}>{count}</Text>
+                </View>
+                <View style={styles.btnView}>
+                    <TouchableOpacity 
+                        onPress={onMinusAmountCount}
+                        style={styles.btn}>
+                        <Text style={styles.btnText}>-</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -31,7 +79,28 @@ const Counter = ({ count, onAddCount, onMinusCount}) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+        flex: 1, justifyContent: 'center', alignItems: 'center'
+    },
+    amountRow: {
+        flex: .1, flexDirection: 'row', alignItems: 'center'
+    },
+    amountInnerView: {
+        width:'50%', height: '100%' , flexDirection: 'row', alignItems: 'center'
+    },
+    amountTextView: {
+        width: '40%', justifyContent: 'center'
+    },
+    amountInputView: {
+        width: '60%', justifyContent: 'center', height: '50%'
+    },
+    amountText: {
+        left: 10, fontSize: 15 
+    },
+    amountInput:{
+        width: '80%', height: '40%', borderWidth: 1, left: 5, paddingLeft: 5
+    },
+    countRow: {
+        flex: .2, flexDirection: 'row', alignItems: 'center'
     },
     btnView: { 
         width: '30%', justifyContent: 'center', alignItems: 'center'
@@ -47,7 +116,8 @@ const styles = StyleSheet.create({
     },
     countText: { 
         fontSize: 40 
-    }
+    },
+    
 });
 const mapStateToProps = (state, ownProps) => {
     return { count: state }
@@ -55,8 +125,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        onAddCount: () => dispatch(actionCreators.addCount()),
-        onMinusCount: () => dispatch(actionCreators.minusCount())
+        onAddCount: (value) => dispatch(addCount(value)),
+        onMinusCount: (value) => dispatch(minusCount(value))
     }
 }
 

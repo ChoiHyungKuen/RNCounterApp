@@ -1,12 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { addCount, minusCount } from './store';
 
 
-const Counter = ({ count, onAddCount, onMinusCount}) => {
-    const [addAmount, setAddAmount] = useState('0');
-    const [minusAmount, setMinusAmount] = useState('0');
+const Counter = () => {
+    const [addAmount, setAddAmount] = useState('1');
+    const [minusAmount, setMinusAmount] = useState('1');
+
+    const count = useSelector((store) => store);        // -> mapStateToProps 유사
+
+    const dispatch = useDispatch();
 
     const onSetAddAmount = useCallback((value) => {
         setAddAmount(value);
@@ -16,12 +20,12 @@ const Counter = ({ count, onAddCount, onMinusCount}) => {
         setMinusAmount(value);
     }, []);
 
-    const onAddAmountCount = () => {
-        onAddCount(parseInt(addAmount));
+    const onAddAmountCount = () => {            
+        dispatch(addCount(parseInt(addAmount)));        // -> mapDispatchToProps 유사
     }
 
     const onMinusAmountCount = () => {
-        onMinusCount(parseInt(minusAmount));
+        dispatch(minusCount(parseInt(minusAmount)));
     }
 
     return (
@@ -35,6 +39,7 @@ const Counter = ({ count, onAddCount, onMinusCount}) => {
                         <TextInput
                             style={styles.amountInput} 
                             keyboardType='number-pad'
+                            selectTextOnFocus={true}
                             onChangeText={onSetAddAmount}
                             value={addAmount}
                         />
@@ -48,6 +53,7 @@ const Counter = ({ count, onAddCount, onMinusCount}) => {
                         <TextInput
                             style={styles.amountInput} 
                             keyboardType='number-pad'
+                            selectTextOnFocus={true}
                             onChangeText={onSetMinusAmount}
                             value={minusAmount}
                         />
@@ -119,16 +125,16 @@ const styles = StyleSheet.create({
     },
     
 });
-const mapStateToProps = (state, ownProps) => {
-    return { count: state }
-}
+// const mapStateToProps = (state, ownProps) => {
+//     return { count: state }
+// }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        onAddCount: (value) => dispatch(addCount(value)),
-        onMinusCount: (value) => dispatch(minusCount(value))
-    }
-}
+// const mapDispatchToProps = (dispatch, ownProps) => {
+//     return {
+//         onAddCount: (value) => dispatch(addCount(value)),
+//         onMinusCount: (value) => dispatch(minusCount(value))
+//     }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Counter);
+export default Counter;
   
